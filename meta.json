@@ -1,6 +1,6 @@
 {
     "name": "XDM rxse repo", 
-    "info_url": "https://github.com/rxsegrxup/XDM-main-plugin-repo/", 
+    "info_url": "https://github.com/rxsegrxup/XDM-rxse-repo/", 
     "plugins": {
         "rxse.lastfm": [
             {
@@ -15,7 +15,7 @@
                     5, 
                     3
                 ], 
-                "download_url": "https://github.com/rxsegrxup/XDM-main-plugin-repo/archive/master.zip"
+                "download_url": "https://github.com/rxsegrxup/XDM-rxse-repo/archive/master.zip"
             }
         ]
     }
