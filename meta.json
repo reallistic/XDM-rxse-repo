@@ -1,21 +1,21 @@
 {
-    "name": "rxse repo", 
+    "name": "XDM rxse repo", 
     "info_url": "https://github.com/rxsegrxup/XDM-main-plugin-repo/", 
     "plugins": {
-        "de.lad1337.boxcar.discogs": [
+        "rxse.lastfm": [
             {
                 "major_version": 0, 
-                "minor_version": 11, 
-                "name": "Discogs", 
+                "minor_version": 1, 
+                "name": "LastFm", 
                 "type": "Provider", 
                 "format": "zip", 
-                "desc": "Information provider for music from http://www.discogs.com. Note: Image download is limited to 1000 per 24h per IP", 
+                "desc": "Information provider for music from http://www.LasFm.com.", 
                 "xdm_version": [
                     0, 
                     5, 
                     3
                 ], 
-                "download_url": "https://github.com/lad1337/XDM-main-plugin-repo/archive/master.zip"
+                "download_url": "https://github.com/rxsegrxup/XDM-main-plugin-repo/archive/master.zip"
             }
         ]
     }
