@@ -7,7 +7,7 @@ import urllib
 import httplib
 from collections import defaultdict
 api_key = '24e80eb914d9be7c19392358d24a39dc'
-api_uri = 'http://ws.audioscrobbler.com/2.0/?api_key=%s&format=json' % api_key
+api_uri = 'http://ws.audioscrobbler.com/2.0/?api_key=%s' % api_key
 #&method=album.search&album=believe'
 
 class LastfmAPIError(Exception):
@@ -56,21 +56,32 @@ class APIBase(object):
 
     @property
     def _uri_name(self):
-        #if current class is search perform album search
-        if self.__class__.__name__.lower() == 'search':
-            return 'album'
-
         return self.__class__.__name__.lower()
+    
+    @property
+    def _apibase(self):
+        if self._uri_name == 'search':
+            return 'album.search'
 
+        elif self._uri_name == 'artist':
+            if self._params["topalbums"]:
+                del self._params["topalbums"]
+                return 'artist.topalbums'
+
+            return 'artist.getinfo'
+
+        elif self._uri_name == 'album':
+            return 'album.getinfo'
+    
     @property
     def _uri(self):
-        return '%s&%s.search&%s=%s' % (api_uri, self._uri_name, self._uri_name, urllib.quote_plus(unicode(self._id).encode('utf-8')))
+        return '%s&method=%s&%s' % (api_uri, self._apibase, urllib.quote_plus(unicode(self._id).encode('utf-8')))
 
     @property
     def data(self):
         if self._response.content and self._response.status_code == 200:
             release_json = json.loads(self._response.content)
-            return release_json.get('results').get(self._uri_name)
+            return release_json.get('lfm').get(self._uri_name)
         else:
             status_code = self._response.status_code
             raise HTTPError(status_code)
@@ -94,10 +105,8 @@ def _parse_credits(extraartists):
 
 def _class_from_string(api_string):
     class_map = {
-            'master': MasterRelease,
-            'release': Release,
-            'artist': Artist,
-            'label': Label
+            'album': Album,
+            'artist': Artist
     }
 
     return class_map[api_string]
@@ -107,7 +116,7 @@ class Artist(APIBase):
         self._id = name
         self._aliases = []
         self._namevariations = []
-        self._releases = []
+        self.albums = []
         self._anv = anv or None
         APIBase.__init__(self)
 
@@ -123,23 +132,16 @@ class Artist(APIBase):
         return self._anv
 
     @property
-    def aliases(self):
-        if not self._aliases:
-            for alias in self.data.get('aliases', []):
-                self._aliases.append(Artist(alias))
-        return self._aliases
-
-    @property
-    def releases(self):
+    def albums(self):
         # TODO: Implement fetch many release IDs
         #return [Release(r.get('id') for r in self.data.get('releases')]
-        if not self._releases:
-            self._params.update({'releases': '1'})
+        if not self._albums:
+            self._params.update({'topalbums': '1'})
             self._clear_cache()
 
-            for r in self.data.get('releases', []):
-                self._releases.append(_class_from_string(r['type'])(r['id']))
-        return self._releases
+            for r in self.data.get('topalbums', []):
+                self._albums.append(_class_from_string(r['type'])(r['name']))
+        return self._albums
         
 
 class Album(APIBase):
@@ -153,7 +155,7 @@ class Album(APIBase):
     @property
     def artist(self):
         if not self._artist:
-            self._artist = self.data.get('artist')
+            self._artist = self.data.get('artist').get('name')
         return self._artist
         
     #not sure if needed
@@ -183,24 +185,18 @@ class Album(APIBase):
     @property
     def tracklist(self):
         if not self._tracklist:
-            for track in self.data.get('tracklist', []):
+            for track in self.data.get('tracks', []):
                 artists = []
                 track['extraartists'] = _parse_credits(track.get('extraartists', []))
-
-                for artist in track.get('artists', []):
-                    artists.append(Artist(artist['name'], anv=artist.get('anv')))
-
-                    if artist['join']:
-                        artists.append(artist['join'])
+                artists.append(Artist(track.get('artist').get['name'], anv=track.get('artist').get['name']))
                 track['artists'] = artists
-                track['type'] = 'Track' if track['position'] else 'Index Track'
-
+                track['type'] = 'Track' if track['rank'] else 'Index Track'
                 self._tracklist.append(track)
         return self._tracklist
 
     @property
     def title(self):
-        return self.data.get('title')
+        return self.data.get('name')
 
 class Search(APIBase):
     def __init__(self, query, page=1):
