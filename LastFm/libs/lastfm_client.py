@@ -60,7 +60,7 @@ class APIBase(object):
     
     @property
     def _apibase(self):
-        if self._uri_name == 'search':
+        if self._uri_name == 'results':
             return 'album.search'
 
         elif self._uri_name == 'artist':
@@ -141,7 +141,7 @@ class Artist(APIBase):
             self._clear_cache()
 
             for r in self.data.get('topalbums', []):
-                self._albums.append(_class_from_string(r['type'])(r['name']))
+                self._albums.append(_class_from_string(r['type'])(r.get('name'), self.id))
         return self._albums
         
 
@@ -175,9 +175,9 @@ class Album(APIBase):
             for track in self.data.get('tracks', []):
                 artists = []
                 track['extraartists'] = _parse_credits(track.get('extraartists', []))
-                artists.append(Artist(track.get('artist').get['name'], anv=track.get('artist').get['name']))
+                artists.append(Artist(track.get('artist').get('name'), anv=track.get('artist').get('name')))
                 track['artists'] = artists
-                track['type'] = 'Track' if track['rank'] else 'Index Track'
+                track['type'] = 'Track' if track.get('rank') else 'Index Track'
                 self._tracklist.append(track)
         return self._tracklist
 
@@ -196,12 +196,8 @@ class Search(APIBase):
         self._params['page'] = self._page
 
     def _to_object(self, result):
-        id = result['title']
-        if result['type'] in ('master', 'release'):
-            id = result['uri'].split('/')[-1]
-        elif result['type'] == 'anv':
-            return Artist(id, anv=result.get('anv'))
-        return _class_from_string(result['type'])(id)
+        id = result.get('name')
+        return _class_from_string(result['type'])(id, result.get('artist'))
 
     @property
     def _uri(self):
@@ -231,7 +227,7 @@ class Search(APIBase):
 
         if page_key not in self._results:
             self._results[page_key] = []
-            for result in self.data['searchresults']['results']:
+            for result in self.data.get('searchresults').get('results'):
                 self._results[page_key].append(self._to_object(result))
 
         return self._results[page_key]
@@ -247,6 +243,11 @@ class Search(APIBase):
         if not self.data:
             return 0
         return int(self.data.get('results').get('opensearch:totalResults', 0))
+    
+    #overwrite so that it returns results
+    @property
+    def _uri_name(self):
+        return 'results'
 
     @property
     def pages(self):
