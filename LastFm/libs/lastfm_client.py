@@ -75,7 +75,7 @@ class APIBase(object):
     
     @property
     def _uri(self):
-        return '%s&method=%s&%s' % (api_uri, self._apibase, urllib.quote_plus(unicode(self._id).encode('utf-8')))
+        return '%s&method=%s' % (api_uri, self._apibase)
 
     @property
     def data(self):
@@ -119,6 +119,7 @@ class Artist(APIBase):
         self.albums = []
         self._anv = anv or None
         APIBase.__init__(self)
+        self._params['artist'] = self._id
 
     def __str__(self):
         return '<%s "%s">' % (self.__class__.__name__, self._anv + '*' if self._anv else self._id)
@@ -145,34 +146,20 @@ class Artist(APIBase):
         
 
 class Album(APIBase):
-    def __init__(self, id):
+    def __init__(self, id, art):
         self._id = id
         self._artist = None
         self._credits = None
         self._tracklist = []
         APIBase.__init__(self)
+        self._params['album'] = urllib.quote_plus(unicode(self._id).encode('utf-8'))
+         self._params['artist'] = art
 
     @property
     def artist(self):
         if not self._artist:
             self._artist = self.data.get('artist').get('name')
         return self._artist
-        
-    #not sure if needed
-
-    @property
-    def master(self):
-        if not self._master and self.data.get('master_id'):
-            self._master = MasterRelease(self.data.get('master_id'))
-        return self._master
-        
-    #not used
-
-    @property
-    def labels(self):
-        if not self._labels:
-            self._labels =  [Label(l['name']) for l in self.data.get('labels', [])]
-        return self._labels
 
     #not used
     
@@ -253,13 +240,13 @@ class Search(APIBase):
     def resultsperpage(self):
         if not self.data:
             return 0
-        return int(self.data['results'].get('opensearch:itemsPerPage', 0))
+        return int(self.data.get('results').get('opensearch:itemsPerPage', 0))
 
     @property
     def numresults(self):
         if not self.data:
             return 0
-        return int(self.data['results'].get('opensearch:totalResults', 0))
+        return int(self.data.get('results').get('opensearch:totalResults', 0))
 
     @property
     def pages(self):
@@ -267,131 +254,3 @@ class Search(APIBase):
             return 0
         return (self.numresults / self.resultsperpage) + 1
 
-"""
-class Release(APIBase):
-    def __init__(self, id):
-        self._id = id
-        self._artists = []
-        self._master = None
-        self._labels = []
-        self._credits = None
-        self._tracklist = []
-        APIBase.__init__(self)
-
-    @property
-    def artists(self):
-        if not self._artists:
-            self._artists = [Artist(a['name']) for a in self.data.get('artists', [])]
-        return self._artists
-    
-    #not used
-
-    @property
-    def master(self):
-        if not self._master and self.data.get('master_id'):
-            self._master = MasterRelease(self.data.get('master_id'))
-        return self._master
-        
-    #not used
-
-    @property
-    def labels(self):
-        if not self._labels:
-            self._labels =  [Label(l['name']) for l in self.data.get('labels', [])]
-        return self._labels
-
-    @property
-    def credits(self):
-        if not self._credits:
-            self._credits = _parse_credits(self.data.get('extraartists', []))
-        return self._credits
-
-    @property
-    def tracklist(self):
-        if not self._tracklist:
-            for track in self.data.get('tracklist', []):
-                artists = []
-                track['extraartists'] = _parse_credits(track.get('extraartists', []))
-
-                for artist in track.get('artists', []):
-                    artists.append(Artist(artist['name'], anv=artist.get('anv')))
-
-                    if artist['join']:
-                        artists.append(artist['join'])
-                track['artists'] = artists
-                track['type'] = 'Track' if track['position'] else 'Index Track'
-
-                self._tracklist.append(track)
-        return self._tracklist
-
-    @property
-    def title(self):
-        return self.data.get('title')
-
-class MasterRelease(APIBase):
-    def __init__(self, id):
-        self._id = id
-        self._key_release = None
-        self._versions = []
-        self._artists = []
-        APIBase.__init__(self)
-
-    # Override class name introspection in BaseAPI since it would otherwise return "masterrelease"
-    @property
-    def _uri_name(self):
-        return 'master'
-
-    @property
-    def key_release(self):
-        if not self._key_release:
-            self._key_release = Release(self.data.get('main_release'))
-        return self._key_release
-
-    @property
-    def title(self):
-        return self.key_release.data.get('title')
-
-    @property
-    def versions(self):
-        if not self._versions:
-            for version in self.data.get('versions', []):
-                self._versions.append(Release(version.get('id')))
-        return self._versions
-
-    @property
-    def artists(self):
-        if not self._artists:
-            for artist in self.data.get('artists', []):
-                self._artists.append(Artist(artist.get('name')))
-        return self._artists
-
-    @property
-    def tracklist(self):
-        return self.key_release.tracklist
-
-class Label(APIBase):
-    def __init__(self, name):
-        self._id = name
-        self._sublabels = []
-        self._parent_label = None
-        APIBase.__init__(self)
-
-    @property
-    def sublabels(self):
-        if not self._sublabels:
-            for sublabel in self.data.get('sublabels', []):
-                self._sublabels.append(Label(sublabel))
-        return self._sublabels
-
-    @property
-    def parent_label(self):
-        if not self._parent_label and self.data.get('parentLabel'):
-            self._parent_label = Label(self.data.get('parentLabel'))
-        return self._parent_label
-
-    @property
-    def releases(self):
-        self._params.update({'releases': '1'})
-        self._clear_cache()
-        return self.data.get('releases')
-"""
