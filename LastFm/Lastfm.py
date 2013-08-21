@@ -36,6 +36,14 @@ class Lastfm(Provider):
                'search_range_select': 'master'}
     config_meta = {'plugin_desc': 'Information provider for music from http://www.last.fm'
                    }
+                   
+    search_range_select_map = {'master': {'t': 'Albums', 'c': ('Album',)}}
+
+    def _search_range_select(self):
+        out = {}
+        for i, o in self.search_range_select_map.items():
+            out[i] = o['t']
+        return out
 
     def searchForElement(self, term='', id=0):
 
@@ -45,16 +53,7 @@ class Lastfm(Provider):
         mtm = common.PM.getMediaTypeManager('de.lad1337.music')[0]
 
         if id:
-            try:
-                id = int(id)
-                addType = 'album'
-            except ValueError:
-                addType = 'artist'
-    
-            if addType == 'album':
-                res = [lastfm.Release(id)]
-            elif addType == 'artist':
-                res = [lastfm.Artist(id)]
+            res = [lastfm.Artist(id)]
         else:
             log('LastFm searching for %s' % term)
             s = lastfm.Search(term)
