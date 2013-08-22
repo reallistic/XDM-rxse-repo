@@ -61,7 +61,7 @@ class Lastfm(Provider):
             log('Search api url: %s' % apiurl)
             res = s.results()
 
-        log(results)
+        log(res)
         fakeRoot = mtm.getFakeRoot(term)
         filtered = [album for album in res if album.__class__.__name__ in self.search_range_select_map[self.c.search_range_select]['c']]
         self.progress.total = len(res)

@@ -7,7 +7,7 @@ import urllib
 import httplib
 from collections import defaultdict
 api_key = '24e80eb914d9be7c19392358d24a39dc'
-api_uri = 'http://ws.audioscrobbler.com/2.0/?api_key=%s' % api_key
+api_uri = 'http://ws.audioscrobbler.com/2.0/?format=json&api_key=%s' % api_key
 #&method=album.search&album=believe'
 
 class LastfmAPIError(Exception):
