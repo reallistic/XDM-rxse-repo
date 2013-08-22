@@ -7,7 +7,8 @@ import urllib
 import httplib
 from collections import defaultdict
 api_key = '24e80eb914d9be7c19392358d24a39dc'
-api_uri = 'http://ws.audioscrobbler.com/2.0/?format=json&api_key=%s' % api_key
+api_uri = 'http://ws.audioscrobbler.com/2.0/?api_key=%s' % api_key
+#format=json&
 #&method=album.search&album=believe'
 
 class LastfmAPIError(Exception):
@@ -88,7 +89,7 @@ class APIBase(object):
     def data(self):
         if self._response.content and self._response.status_code == 200:
             release_json = json.loads(self._response.content)
-            return release_json.get('results').get(self._uri_name)
+            return release_json.get('lfm').get(self._uri_name)
         else:
             status_code = self._response.status_code
             raise HTTPError(status_code)
@@ -250,7 +251,7 @@ class Search(APIBase):
     #overwrite so that it returns results
     @property
     def _uri_name(self):
-        return 'albummatches'
+        return 'results'
 
     @property
     def pages(self):
