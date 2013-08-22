@@ -27,7 +27,7 @@ lastfm.user_agent = '%s +http://xdm.lad1337.de' % common.getVersionHuman()
 
 
 class Lastfm(Provider):
-    version = "0.19"
+    version = "0.20"
     identifier = "rxse.lastfm"
     _tag = 'lastfm'
     single = True
