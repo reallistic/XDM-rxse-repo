@@ -2,6 +2,7 @@ __version_info__ = (1,1,1)
 __version__ = '1.1.1'
 
 from lib import requests
+from xdm import logger
 import json
 import urllib
 import httplib
@@ -50,6 +51,7 @@ class APIBase(object):
     @property
     def _response(self):
         if not self._cached_response:
+            log.info('getting data from %s/%s' % (self._uri, params=self._params))
             self._cached_response = requests.get(self._uri, params=self._params)
 
         return self._cached_response
