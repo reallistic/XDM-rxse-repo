@@ -201,7 +201,7 @@ class Search(APIBase):
         self._exactresults = []
         self._page = page
         APIBase.__init__(self)
-        self._params['q'] = self._id
+        self._params['album'] = self._id
         self._params['page'] = self._page
 
     def _to_object(self, result):
