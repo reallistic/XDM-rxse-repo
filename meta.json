@@ -5,15 +5,15 @@
         "rxse.lastfm": [
             {
                 "major_version": 0, 
-                "minor_version": 1, 
-                "name": "LastFm", 
-                "type": "Provider", 
-                "format": "zip", 
+                "minor_version": 3, 
+                "name": "LastFm",
+                "type": "Provider",
+                "format": "zip",
                 "desc": "Information provider for music from http://www.LasFm.com.", 
                 "xdm_version": [
                     0, 
-                    4, 
-                    16
+                    5, 
+                    3
                 ], 
                 "download_url": "https://github.com/rxsegrxup/XDM-rxse-repo/archive/master.zip"
             }
