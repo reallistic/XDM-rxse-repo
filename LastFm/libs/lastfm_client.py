@@ -51,7 +51,7 @@ class APIBase(object):
     @property
     def _response(self):
         if not self._cached_response:
-            log.info('getting data from %s/%s' % (self._uri, params=self._params))
+            log.info('getting data from %s/%s' % (self._uri, self._params))
             self._cached_response = requests.get(self._uri, params=self._params)
 
         return self._cached_response
