@@ -250,7 +250,7 @@ class Search(APIBase):
     #overwrite so that it returns results
     @property
     def _uri_name(self):
-        return 'results'
+        return 'albummatches'
 
     @property
     def pages(self):
