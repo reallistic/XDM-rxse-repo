@@ -27,8 +27,8 @@ lastfm.user_agent = '%s +http://xdm.lad1337.de' % common.getVersionHuman()
 
 
 class Lastfm(Provider):
-    version = "0.18"
-    identifier = "de.lad1337.boxcar.lastfm"
+    version = "0.19"
+    identifier = "de.rxse.lastfm"
     _tag = 'lastfm'
     single = True
     types = ['de.lad1337.music']
