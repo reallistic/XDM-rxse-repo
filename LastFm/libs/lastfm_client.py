@@ -153,7 +153,7 @@ class Album(APIBase):
         self._tracklist = []
         APIBase.__init__(self)
         self._params['album'] = urllib.quote_plus(unicode(self._id).encode('utf-8'))
-         self._params['artist'] = art
+        self._params['artist'] = art
 
     @property
     def artist(self):
