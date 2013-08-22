@@ -86,7 +86,7 @@ class Lastfm(Provider):
             artistElement.saveTemp()
         try:
             albumElement = Element.getWhereField(mediaType, 'Album', {'id': release.data['id']}, self.tag, artistElement)
-            print "we have", albumElement
+            #print "we have" albumElement
         except Element.DoesNotExist:
             albumElement = Element()
             albumElement.mediaType = mediaType
