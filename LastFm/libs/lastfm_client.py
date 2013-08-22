@@ -80,6 +80,10 @@ class APIBase(object):
         return '%s&method=%s' % (api_uri, self._apibase)
 
     @property
+    def _uri_params(self):
+        return '%s&method=%s&%s' % (api_uri, self._apibase, self._params)
+
+    @property
     def data(self):
         if self._response.content and self._response.status_code == 200:
             release_json = json.loads(self._response.content)
@@ -200,10 +204,6 @@ class Search(APIBase):
     def _to_object(self, result):
         id = result.get('name')
         return _class_from_string(result['type'])(id, result.get('artist'))
-
-    @property
-    def _uri(self):
-        return '%s/%s' % (api_uri, self._uri_name)
 
     @property
     def exactresults(self):
