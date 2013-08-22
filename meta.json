@@ -5,7 +5,7 @@
         "rxse.lastfm": [
             {
                 "major_version": 0, 
-                "minor_version": 16, 
+                "minor_version": 17, 
                 "name": "LastFm",
                 "type": "Provider",
                 "format": "zip",

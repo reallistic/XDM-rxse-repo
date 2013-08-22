@@ -88,7 +88,7 @@ class APIBase(object):
     def data(self):
         if self._response.content and self._response.status_code == 200:
             release_json = json.loads(self._response.content)
-            return release_json.get('lfm').get(self._uri_name)
+            return release_json.get('results').get(self._uri_name)
         else:
             status_code = self._response.status_code
             raise HTTPError(status_code)
