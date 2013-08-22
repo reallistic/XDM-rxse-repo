@@ -27,7 +27,7 @@ lastfm.user_agent = '%s +http://xdm.lad1337.de' % common.getVersionHuman()
 
 
 class Lastfm(Provider):
-    version = "0.10"
+    version = "0.12"
     identifier = "de.lad1337.boxcar.lastfm"
     _tag = 'lastfm'
     single = True
@@ -57,7 +57,7 @@ class Lastfm(Provider):
         else:
             log('LastFm searching for %s' % term)
             s = lastfm.Search(term)
-            log.('Search api url: %s' % s._uri_params)
+            log.('Search api url: %s' % s.getApiCall())
             res = s.results()
 
         fakeRoot = mtm.getFakeRoot(term)
