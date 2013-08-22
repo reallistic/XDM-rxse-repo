@@ -14,7 +14,7 @@ class LastfmAPIError(Exception):
     """Root Exception class for Discogs API errors."""
     pass
 
-class HTTPError(DiscogsAPIError):
+class HTTPError(LastfmAPIError):
     """Exception class for HTTP(lib) errors."""
     def __init__(self, code):
         self.code = code
