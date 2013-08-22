@@ -48,6 +48,9 @@ class APIBase(object):
     def _clear_cache(self):
         self._cached_response = None
 
+    def getApiCall(self):
+        return self._uri_params
+
     @property
     def _response(self):
         if not self._cached_response:
